@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    Boolean isActive=false , haveDot=false, isEmpty=true;
     Double firstValue, secondValue, result;
     String operation;
     TextView result_field;
@@ -22,85 +23,111 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()){
                 case R.id.nine:
                     result_field.append("9");
+                    isEmpty=false;
                 break;
                 case R.id.eight:
                     result_field.append("8");
+                    isEmpty=false;
                 break;
                 case R.id.seven:
                     result_field.append("7");
+                    isEmpty=false;
                 break;
                 case R.id.six:
                     result_field.append("6");
+                    isEmpty=false;
                 break;
                 case R.id.five:
                     result_field.append("5");
+                    isEmpty=false;
                 break;
                 case R.id.four:
                     result_field.append("4");
+                    isEmpty=false;
                 break;
                 case R.id.three:
                     result_field.append("3");
+                    isEmpty=false;
                 break;
                 case R.id.two:
                     result_field.append("2");
+                    isEmpty=false;
                 break;
                 case R.id.one:
                     result_field.append("1");
+                    isEmpty=false;
                 break;
                 case R.id.zero:
                     result_field.append("0");
+                    isEmpty=false;
                 break;
                 case R.id.dot:
-                    result_field.append(".");
+                    if (!haveDot && !isEmpty) {
+                        result_field.append(".");
+                    }
+                    haveDot=true;
+                    isEmpty=false;
                     break;
                 case R.id.clear:
                     result_field.setText("");
+                    isActive=false;
+                    operation=null;
+                    haveDot=true;
+                    isEmpty=true;
                     break;
         }
     }
 
     public void onOperationClick(View view) {
-        switch (view.getId()){
+        if (view.getId() == R.id.equal){
+            if (operation != null && isActive) {
+                        String two = result_field.getText().toString().replace(firstValue + operation + "", "");
+                        secondValue = Double.valueOf(two);
+                        switch (operation) {
+                            case "+":
+                                plus_op();
+                                break;
+                            case "-":
+                                minus_op();
+                                break;
+                            case "*":
+                                multiply_op();
+                                break;
+                            case "/":
+                                divide_op();
+                                break;
+                        }
+                        operation=null;
+                        isActive=false;
+                    }
+        }
+        if (!isActive && operation == null && !isEmpty) {
+            switch (view.getId()) {
                 case R.id.plus:
                     operation = "+";
                     firstValue = Double.valueOf(result_field.getText().toString());
                     result_field.setText(firstValue + "+");
-                break;
+                    isActive=true;
+                    break;
                 case R.id.minus:
                     operation = "-";
                     firstValue = Double.valueOf(result_field.getText().toString());
                     result_field.setText(firstValue + "-");
+                    isActive=true;
                     break;
                 case R.id.divide:
                     operation = "/";
                     firstValue = Double.valueOf(result_field.getText().toString());
                     result_field.setText(firstValue + "/");
-                break;
+                    isActive=true;
+                    break;
                 case R.id.multiply:
                     operation = "*";
                     firstValue = Double.valueOf(result_field.getText().toString());
                     result_field.setText(firstValue + "*");
-                break;
-                case R.id.equal:
-                    if (operation != null){
-                        String two = result_field.getText().toString().replace(firstValue+operation+"", "");
-                        secondValue = Double.valueOf(two.toString());
-                        switch (operation){
-                                case "+":
-                                plus_op();
-                                break;
-                                case "-":
-                                minus_op();
-                                break;
-                                case "*":
-                                multiply_op();
-                                break;
-                                case "/":
-                                divide_op();
-                                break;
-                        }
-                    }
+                    isActive=true;
                     break;
+            }
         }
     }
     public void plus_op(){
@@ -114,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         result = firstValue * secondValue;
         result_field.setText(result.toString());
     }public void divide_op(){
-        result = firstValue / secondValue;
-        result_field.setText(result.toString());
+            result = firstValue / secondValue;
+            result_field.setText(result.toString());
     }
 }

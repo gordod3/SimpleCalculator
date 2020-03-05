@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    Boolean isActive=false , haveDot=false, isEmpty=true;
+    Boolean isActive=false , haveDot=false, isEmpty=true, isResult=false;
     Double firstValue, secondValue, result;
     String operation;
     TextView result_field;
@@ -20,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onNumberClick(View view) {
+        if (isResult){
+            result_field.setText(result.toString());
+            isResult=false;
+        }
         switch (view.getId()){
                 case R.id.nine:
                     result_field.append("9");
@@ -79,10 +83,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onOperationClick(View view) {
+        if (isResult){
+            result_field.setText(result.toString());
+            isResult=false;
+        }
         if (view.getId() == R.id.equal){
             if (operation != null && isActive) {
                         String two = result_field.getText().toString().replace(firstValue + operation + "", "");
-                        secondValue = Double.valueOf(two);
+                        try {
+                            secondValue = Double.valueOf(two);
                         switch (operation) {
                             case "+":
                                 plus_op();
@@ -97,8 +106,13 @@ public class MainActivity extends AppCompatActivity {
                                 divide_op();
                                 break;
                         }
+                        isResult=true;
+                        }catch (Exception e ){
+                            result_field.setText("");
+                        }
                         operation=null;
                         isActive=false;
+
                     }
         }
         if (!isActive && operation == null && !isEmpty) {
@@ -132,16 +146,16 @@ public class MainActivity extends AppCompatActivity {
     }
     public void plus_op(){
         result = firstValue + secondValue;
-        result_field.setText(result.toString());
+        result_field.setText(firstValue +"+"+secondValue+"="+result.toString());
     }
     public void minus_op(){
         result = firstValue - secondValue;
-        result_field.setText(result.toString());
+        result_field.setText(firstValue +"-"+secondValue+"="+result.toString());
     }public void multiply_op(){
         result = firstValue * secondValue;
-        result_field.setText(result.toString());
+        result_field.setText(firstValue +"*"+secondValue+"="+result.toString());
     }public void divide_op(){
             result = firstValue / secondValue;
-            result_field.setText(result.toString());
+            result_field.setText(firstValue +"/"+secondValue+"="+result.toString());
     }
 }

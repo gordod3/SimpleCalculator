@@ -1,22 +1,87 @@
 package com.example.simplecalculator;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import javax.xml.parsers.SAXParser;
 
 public class MainActivity extends AppCompatActivity {
     Boolean isActive=false , haveDot=false, isEmpty=true, isResult=false;
     Double firstValue, secondValue, result;
     String operation;
     TextView result_field;
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("lol", "strange");
+        outState.putString("saved_resultField", result_field.getText().toString());
+        outState.putString("saved_operation", operation);
+        outState.putBoolean("saved_haveDot", haveDot);
+        outState.putBoolean("saved_isEmpty", isEmpty);
+        outState.putBoolean("saved_isResult", isResult);
+        outState.putBoolean("saved_isActive", isActive);
+        try {
+            outState.putDouble("saved_firstValue", firstValue);
+        }catch (Exception e){}
+        try {
+            outState.putDouble("saved_secondValue", secondValue);
+        }catch (Exception e){}
+        try {
+            outState.putDouble("saved_result", result);
+        }catch (Exception e){}
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         result_field = findViewById(R.id.res);
+        try {
+            result_field.setText(savedInstanceState.getString("saved_resultField"));
+        }catch (Exception e){}
+        try {
+            operation = savedInstanceState.getString("saved_operation");
+        }catch (Exception e){}
+        try {
+            haveDot=savedInstanceState.getBoolean("saved_haveDot");
+        }catch (Exception e){}
+        try {
+            isResult = savedInstanceState.getBoolean("saved_isResult");
+        }catch (Exception e){}
+        try {
+            isEmpty = savedInstanceState.getBoolean("saved_isEmpty");
+        }catch (Exception e ){}
+        try {
+            isActive=savedInstanceState.getBoolean("saved_isActive");
+        }catch (Exception e){}
+        try {
+            firstValue=savedInstanceState.getDouble("saved_firstValue");
+        }catch (Exception e){}
+        try {
+            secondValue=savedInstanceState.getDouble("saved_secondValue");
+        }catch (Exception e){}
+        try {
+            result=savedInstanceState.getDouble("saved_result");
+        }catch (Exception e){}
+        if (isResult){
+            result_field.setText(result.toString());
+            isResult=false;
+        }
+
     }
 
     public void onNumberClick(View view) {
@@ -66,8 +131,10 @@ public class MainActivity extends AppCompatActivity {
                     isEmpty=false;
                 break;
                 case R.id.dot:
-                    if (!haveDot && !isEmpty) {
-                        result_field.append(".");
+                    if (!haveDot) {
+                        if (isEmpty) {
+                            result_field.append("0.");
+                        }else result_field.append(".");
                     }
                     haveDot=true;
                     isEmpty=false;
@@ -112,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         operation=null;
                         isActive=false;
-
+                        haveDot=true;
                     }
         }
         if (!isActive && operation == null && !isEmpty) {

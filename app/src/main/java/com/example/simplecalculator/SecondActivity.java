@@ -17,7 +17,7 @@ public class SecondActivity extends AppCompatActivity {
     public void share(View view){
         if (isResult) {
             Intent intent = new Intent();
-            intent.putExtra("text_result", result_field.toString());
+            intent.putExtra("text_result", result.toString());
             setResult(RESULT_OK, intent);
             finish();
         }
